@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W40K Match Companion — UX Mockup</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Roboto+Condensed:wght@400;700&family=Roboto:wght@400;500&display=swap');
+
+        :root {
+            --bg: #0D0F14;
+            --card: #161920;
+            --elevated: #1E2330;
+            --border: #2A2F3E;
+            --text-primary: #E8EAF0;
+            --text-muted: #5C6478;
+            --player1: #4FC3F7;
+            --player2: #EF5350;
+            --sync-ok: #4CAF50;
+            --sync-pending: #FF9800;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #080A0E;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 32px;
+            min-height: 100vh;
+            padding: 40px 24px;
+            font-family: 'Roboto', sans-serif;
+            flex-wrap: wrap;
+        }
+
+        /* ---- PHONE FRAME ---- */
+        .phone {
+            width: 375px;
+            min-height: 812px;
+            background: var(--bg);
+            border-radius: 40px;
+            border: 2px solid var(--border);
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 60px rgba(79, 195, 247, 0.06), 0 0 120px rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .phone-label {
+            color: var(--text-muted);
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        /* ---- STATUS BAR ---- */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 24px 8px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .sync-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            font-family: 'Roboto Condensed', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--sync-ok);
+        }
+
+        .sync-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--sync-ok);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* ---- HEADER ---- */
+        .match-header {
+            padding: 8px 20px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .match-title {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .match-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .room-code {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 13px;
+            color: var(--text-primary);
+            opacity: 0.7;
+        }
+
+        .round-badge {
+            background: var(--elevated);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 4px 10px;
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+        }
+
+        /* ---- SCORE HEROES ---- */
+        .score-heroes {
+            display: grid;
+            grid-template-columns: 1fr 1px 1fr;
+            padding: 20px 0 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .score-hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 0 16px;
+        }
+
+        .score-hero .player-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .player-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .player-name {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+        }
+
+        .big-score {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -2px;
+        }
+
+        .score-divider {
+            background: var(--border);
+            align-self: stretch;
+        }
+
+        .p1 .big-score {
+            color: var(--player1);
+        }
+
+        .p2 .big-score {
+            color: var(--player2);
+        }
+
+        .p1 .player-dot {
+            background: var(--player1);
+        }
+
+        .p2 .player-dot {
+            background: var(--player2);
+        }
+
+        /* ---- SCORE GRID ---- */
+        .grid-section {
+            padding: 16px 20px;
+            flex: 1;
+        }
+
+        .grid-label {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .score-grid {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .score-grid th {
+            background: var(--elevated);
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            padding: 8px 6px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+        }
+
+        .score-grid th:last-child {
+            border-right: none;
+        }
+
+        .score-grid th.row-header {
+            text-align: left;
+            padding-left: 10px;
+            min-width: 70px;
+        }
+
+        .score-grid td {
+            background: var(--card);
+            padding: 0;
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+            position: relative;
+        }
+
+        .score-grid td:last-child {
+            border-right: none;
+        }
+
+        .score-grid tr:last-child td {
+            border-bottom: none;
+        }
+
+        .cell-content {
+            padding: 8px 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            min-height: 52px;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .cell-content:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .cell-prim {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .cell-sec {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .cell-total {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            border-top: 1px solid var(--border);
+            padding-top: 2px;
+            margin-top: 2px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* cell states */
+        .cell-p1 .cell-prim {
+            color: var(--player1);
+        }
+
+        .cell-p1 .cell-total {
+            color: var(--player1);
+        }
+
+        .cell-p2 .cell-prim {
+            color: var(--player2);
+        }
+
+        .cell-p2 .cell-total {
+            color: var(--player2);
+        }
+
+        .cell-active {
+            background: rgba(79, 195, 247, 0.05) !important;
+            outline: 1px solid rgba(79, 195, 247, 0.3);
+            outline-offset: -1px;
+        }
+
+        .cell-active-p2 {
+            background: rgba(239, 83, 80, 0.05) !important;
+            outline: 1px solid rgba(239, 83, 80, 0.3);
+            outline-offset: -1px;
+        }
+
+        .cell-locked .cell-content {
+            cursor: default;
+        }
+
+        .cell-locked .cell-prim {
+            color: var(--text-muted);
+        }
+
+        .cell-future .cell-prim {
+            color: var(--border);
+        }
+
+        .cell-future .cell-content {
+            cursor: default;
+        }
+
+        .lock-icon {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            font-size: 8px;
+            opacity: 0.3;
+        }
+
+        /* total col */
+        .col-total {
+            background: var(--elevated) !important;
+        }
+
+        .col-total .cell-content {
+            cursor: default;
+        }
+
+        .row-label-cell {
+            background: var(--elevated) !important;
+            text-align: left;
+        }
+
+        .row-label-cell .cell-content {
+            align-items: flex-start;
+            padding-left: 10px;
+            cursor: default;
+        }
+
+        .row-label {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+
+        /* ---- CP STRIP ---- */
+        .cp-strip {
+            border-top: 1px solid var(--border);
+            padding: 12px 20px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .cp-card {
+            flex: 1;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 0;
+            overflow: hidden;
+        }
+
+        .cp-btn {
+            width: 40px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .cp-btn:hover {
+            background: var(--elevated);
+            color: var(--text-primary);
+        }
+
+        .cp-center {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cp-label {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+        }
+
+        .cp-value {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .cp-p1 .cp-value {
+            color: var(--player1);
+        }
+
+        .cp-p2 .cp-value {
+            color: var(--player2);
+        }
+
+        /* ---- BOTTOM NAV ---- */
+        .bottom-nav {
+            border-top: 1px solid var(--border);
+            display: flex;
+            padding: 8px 0 20px;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 8px 4px;
+            cursor: pointer;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            opacity: 0.5;
+        }
+
+        .nav-label {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+
+        .nav-item.active .nav-icon {
+            opacity: 1;
+        }
+
+        .nav-item.active .nav-label {
+            color: var(--player1);
+        }
+
+        /* ---- BOTTOM SHEET OVERLAY ---- */
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: flex-end;
+            z-index: 10;
+        }
+
+        .bottom-sheet {
+            width: 100%;
+            background: var(--elevated);
+            border-top: 1px solid var(--border);
+            border-radius: 20px 20px 0 0;
+            padding: 20px 24px 36px;
+        }
+
+        .sheet-handle {
+            width: 36px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+
+        .sheet-title {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .sheet-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field-label {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+        }
+
+        .field-input {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 12px 14px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--player1);
+            text-align: center;
+            outline: none;
+            width: 100%;
+        }
+
+        .field-input:focus {
+            border-color: var(--player1);
+        }
+
+        .confirm-btn {
+            width: 100%;
+            background: var(--player1);
+            color: #0D0F14;
+            border: none;
+            border-radius: 4px;
+            padding: 16px;
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+
+        .confirm-btn:hover {
+            opacity: 0.85;
+        }
+
+        /* ---- SIDEBAR ANNOTATIONS ---- */
+        .annotations {
+            width: 260px;
+            padding-top: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .annotation {
+            background: #111418;
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--player1);
+            border-radius: 0 4px 4px 0;
+            padding: 12px 14px;
+        }
+
+        .annotation.p2 {
+            border-left-color: var(--player2);
+        }
+
+        .annotation.neutral {
+            border-left-color: var(--text-muted);
+        }
+
+        .ann-title {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .ann-body {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .ann-body strong {
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SCREEN 1: Match principale -->
+    <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+        <div class="phone-label">ÉCRAN PRINCIPAL — MATCH EN COURS</div>
+        <div class="phone">
+            <!-- Status bar -->
+            <div class="status-bar">
+                <span>21:04</span>
+                <div class="sync-indicator">
+                    <div class="sync-dot"></div>
+                    <span>Synced</span>
+                </div>
+                <span>●●●</span>
+            </div>
+
+            <!-- Header -->
+            <div class="match-header">
+                <div class="match-title">Warhammer 40K — Match Room</div>
+                <div class="match-meta">
+                    <span class="room-code">ROOM · XK-7742</span>
+                    <span class="round-badge">Battle Round 3 / 5</span>
+                </div>
+            </div>
+
+            <!-- Score heroes -->
+            <div class="score-heroes">
+                <div class="score-hero p1">
+                    <div class="player-badge">
+                        <div class="player-dot"></div>
+                        <span class="player-name">Vartus</span>
+                    </div>
+                    <div class="big-score">47</div>
+                </div>
+                <div class="score-divider"></div>
+                <div class="score-hero p2">
+                    <div class="player-badge">
+                        <div class="player-dot"></div>
+                        <span class="player-name">Skaven</span>
+                    </div>
+                    <div class="big-score">39</div>
+                </div>
+            </div>
+
+            <!-- Score grid -->
+            <div class="grid-section">
+                <div class="grid-label">Score par round</div>
+                <table class="score-grid">
+                    <thead>
+                        <tr>
+                            <th class="row-header"></th>
+                            <th>R1</th>
+                            <th>R2</th>
+                            <th>R3</th>
+                            <th>R4</th>
+                            <th>R5</th>
+                            <th>TOT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Player 1 -->
+                        <tr>
+                            <td class="row-label-cell">
+                                <div class="cell-content">
+                                    <span class="row-label" style="color:var(--player1)">Vartus</span>
+                                    <span class="row-label" style="font-size:8px">Prim / Sec</span>
+                                </div>
+                            </td>
+                            <td class="cell-p1 cell-locked">
+                                <div class="cell-content">
+                                    <span class="cell-prim">12</span>
+                                    <span class="cell-sec">+5</span>
+                                    <span class="cell-total">17</span>
+                                </div>
+                            </td>
+                            <td class="cell-p1 cell-locked">
+                                <div class="cell-content">
+                                    <span class="cell-prim">8</span>
+                                    <span class="cell-sec">+8</span>
+                                    <span class="cell-total">16</span>
+                                </div>
+                            </td>
+                            <td class="cell-p1 cell-active">
+                                <div class="cell-content">
+                                    <span class="cell-prim" style="font-size:10px;color:var(--text-muted)">TAP</span>
+                                    <span class="cell-sec">— / —</span>
+                                </div>
+                            </td>
+                            <td class="cell-future">
+                                <div class="cell-content">
+                                    <span class="cell-prim">·</span>
+                                </div>
+                            </td>
+                            <td class="cell-future">
+                                <div class="cell-content">
+                                    <span class="cell-prim">·</span>
+                                </div>
+                            </td>
+                            <td class="col-total cell-p1">
+                                <div class="cell-content">
+                                    <span class="cell-prim" style="font-size:16px;font-weight:700">33</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- Player 2 -->
+                        <tr>
+                            <td class="row-label-cell">
+                                <div class="cell-content">
+                                    <span class="row-label" style="color:var(--player2)">Skaven</span>
+                                    <span class="row-label" style="font-size:8px">Prim / Sec</span>
+                                </div>
+                            </td>
+                            <td class="cell-p2 cell-locked">
+                                <div class="cell-content">
+                                    <span class="cell-prim">10</span>
+                                    <span class="cell-sec">+3</span>
+                                    <span class="cell-total">13</span>
+                                </div>
+                            </td>
+                            <td class="cell-p2 cell-locked">
+                                <div class="cell-content">
+                                    <span class="cell-prim">9</span>
+                                    <span class="cell-sec">+5</span>
+                                    <span class="cell-total">14</span>
+                                </div>
+                            </td>
+                            <td class="cell-p2 cell-active-p2">
+                                <div class="cell-content">
+                                    <span class="cell-prim" style="font-size:10px;color:var(--text-muted)">TAP</span>
+                                    <span class="cell-sec">— / —</span>
+                                </div>
+                            </td>
+                            <td class="cell-future">
+                                <div class="cell-content">
+                                    <span class="cell-prim">·</span>
+                                </div>
+                            </td>
+                            <td class="cell-future">
+                                <div class="cell-content">
+                                    <span class="cell-prim">·</span>
+                                </div>
+                            </td>
+                            <td class="col-total cell-p2">
+                                <div class="cell-content">
+                                    <span class="cell-prim" style="font-size:16px;font-weight:700">27</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- CP Strip -->
+            <div class="cp-strip">
+                <div class="cp-card cp-p1">
+                    <div class="cp-btn">−</div>
+                    <div class="cp-center">
+                        <span class="cp-label">CP Vartus</span>
+                        <span class="cp-value">6</span>
+                    </div>
+                    <div class="cp-btn">+</div>
+                </div>
+                <div class="cp-card cp-p2">
+                    <div class="cp-btn">−</div>
+                    <div class="cp-center">
+                        <span class="cp-label">CP Skaven</span>
+                        <span class="cp-value">4</span>
+                    </div>
+                    <div class="cp-btn">+</div>
+                </div>
+            </div>
+
+            <!-- Bottom Nav -->
+            <div class="bottom-nav">
+                <div class="nav-item active">
+                    <span class="nav-icon">⚔️</span>
+                    <span class="nav-label">Match</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-label">Historique</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-label">Joueurs</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Room</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: Bottom sheet saisie score -->
+    <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+        <div class="phone-label">BOTTOM SHEET — SAISIE ROUND 3</div>
+        <div class="phone">
+            <!-- Status bar -->
+            <div class="status-bar">
+                <span>21:06</span>
+                <div class="sync-indicator">
+                    <div class="sync-dot"></div>
+                    <span>Synced</span>
+                </div>
+                <span>●●●</span>
+            </div>
+
+            <!-- Header -->
+            <div class="match-header">
+                <div class="match-title">Warhammer 40K — Match Room</div>
+                <div class="match-meta">
+                    <span class="room-code">ROOM · XK-7742</span>
+                    <span class="round-badge">Battle Round 3 / 5</span>
+                </div>
+            </div>
+
+            <!-- Score heroes (dimmed) -->
+            <div class="score-heroes" style="opacity:0.3">
+                <div class="score-hero p1">
+                    <div class="player-badge">
+                        <div class="player-dot"></div><span class="player-name">Vartus</span>
+                    </div>
+                    <div class="big-score">47</div>
+                </div>
+                <div class="score-divider"></div>
+                <div class="score-hero p2">
+                    <div class="player-badge">
+                        <div class="player-dot"></div><span class="player-name">Skaven</span>
+                    </div>
+                    <div class="big-score">39</div>
+                </div>
+            </div>
+
+            <!-- Grid dimmed -->
+            <div class="grid-section" style="opacity:0.3; flex:1">
+                <div class="grid-label">Score par round</div>
+                <table class="score-grid">
+                    <thead>
+                        <tr>
+                            <th class="row-header"></th>
+                            <th>R1</th>
+                            <th>R2</th>
+                            <th>R3</th>
+                            <th>R4</th>
+                            <th>R5</th>
+                            <th>TOT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="row-label-cell">
+                                <div class="cell-content"><span class="row-label"
+                                        style="color:var(--player1)">Vartus</span></div>
+                            </td>
+                            <td class="cell-p1">
+                                <div class="cell-content"><span class="cell-prim">17</span></div>
+                            </td>
+                            <td class="cell-p1">
+                                <div class="cell-content"><span class="cell-prim">16</span></div>
+                            </td>
+                            <td class="cell-p1 cell-active">
+                                <div class="cell-content"><span class="cell-prim"
+                                        style="color:var(--text-muted);font-size:10px">—</span></div>
+                            </td>
+                            <td class="cell-future">
+                                <div class="cell-content"><span class="cell-prim">·</span></div>
+                            </td>
+                            <td class="cell-future">
+                                <div class="cell-content"><span class="cell-prim">·</span></div>
+                            </td>
+                            <td class="col-total cell-p1">
+                                <div class="cell-content"><span class="cell-prim"
+                                        style="font-size:16px;font-weight:700">33</span></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bottom sheet overlay -->
+            <div class="overlay">
+                <div class="bottom-sheet">
+                    <div class="sheet-handle"></div>
+                    <div class="sheet-title" style="color:var(--player1)">▸ Vartus — Battle Round 3</div>
+                    <div class="sheet-fields">
+                        <div class="field-group">
+                            <span class="field-label">VP Primaires</span>
+                            <input class="field-input" type="number" value="11" />
+                        </div>
+                        <div class="field-group">
+                            <span class="field-label">VP Secondaires</span>
+                            <input class="field-input" type="number" value="4" />
+                        </div>
+                    </div>
+                    <button class="confirm-btn">Confirmer Round 3</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANNOTATIONS -->
+    <div class="annotations">
+        <div
+            style="color:var(--text-muted); font-family:'Roboto Condensed',sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:2px; margin-bottom:-8px;">
+            Notes de design</div>
+
+        <div class="annotation">
+            <div class="ann-title">Scores héros</div>
+            <div class="ann-body"><strong>56sp Roboto Mono Bold</strong> — lisible à 50cm. Couleur joueur dominant. Le
+                delta entre les deux saute aux yeux immédiatement.</div>
+        </div>
+
+        <div class="annotation neutral">
+            <div class="ann-title">ScoreGrid — états cellules</div>
+            <div class="ann-body">
+                <strong>Past rounds</strong> — figés, valeur affichée<br>
+                <strong>Active round</strong> — outline couleur joueur, "TAP" affiché<br>
+                <strong>Future rounds</strong> — grisés, point neutre
+            </div>
+        </div>
+
+        <div class="annotation neutral">
+            <div class="ann-title">CP Strip</div>
+            <div class="ann-body">Toujours visible. Zones +/− de <strong>40px de large</strong>, suffisamment grosses
+                pour un tap rapide sans regarder. Couleur joueur sur la valeur.</div>
+        </div>
+
+        <div class="annotation p2">
+            <div class="ann-title">Bottom Sheet — saisie</div>
+            <div class="ann-body">Clavier numérique natif. <strong>Champs larges, valeurs 28sp</strong>. Un seul bouton
+                de confirmation — couleur joueur, pleine largeur. Tape → Firestore → flash 200ms sur toutes les
+                instances.</div>
+        </div>
+
+        <div class="annotation neutral">
+            <div class="ann-title">Sync Indicator</div>
+            <div class="ann-body">Point animé en status bar. <strong>Vert pulsé = synced</strong>, orange = pending,
+                rouge = offline. Toujours visible, jamais intrusif.</div>
+        </div>
+    </div>
+
+</body>
+
+</html>
