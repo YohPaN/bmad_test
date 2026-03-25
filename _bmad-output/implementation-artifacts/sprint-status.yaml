@@ -1,0 +1,92 @@
+# generated: 2026-03-25
+# last_updated: 2026-03-25
+# project: cursor_project
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-03-25
+last_updated: 2026-03-25
+project: cursor_project
+project_key: NOKEY
+tracking_system: file-system
+story_location: "_bmad-output/implementation-artifacts"
+
+development_status:
+  # ─── Epic 1: Project Foundation & Infrastructure Bootstrap ───
+  epic-1: in-progress
+  1-1-initialize-flutter-android-project: ready-for-dev
+  1-2-firebase-integration-anonymous-authentication: backlog
+  1-3-firestore-security-rules-firebase-cli-configuration: backlog
+  1-4-feature-first-project-structure-core-utilities: backlog
+  1-5-internal-apk-build-distribution-setup: backlog
+  epic-1-retrospective: optional
+
+  # ─── Epic 2: Match Room Lifecycle ───
+  epic-2: backlog
+  2-1-room-domain-models-repository: backlog
+  2-2-create-room-lobby-screen: backlog
+  2-3-join-room-by-code: backlog
+  2-4-start-match-session: backlog
+  2-5-player-presence-room-management-screen: backlog
+  2-6-players-screen-connected-participants-view: backlog
+  epic-2-retrospective: optional
+
+  # ─── Epic 3: Live Match Score & Resource Tracking ───
+  epic-3: backlog
+  3-1-game-domain-models-pure-business-rules: backlog
+  3-2-score-grid-widget-round-score-cell: backlog
+  3-3-round-score-entry-bottom-sheet: backlog
+  3-4-score-hero-bar-real-time-score-broadcast: backlog
+  3-5-command-points-counter-round-advancement: backlog
+  epic-3-retrospective: optional
+
+  # ─── Epic 4: Action Safety & Dispute Resolution ───
+  epic-4: backlog
+  4-1-append-only-event-log-history-screen: backlog
+  4-2-two-step-undo-with-state-recalculation: backlog
+  4-3-ownership-enforcement-owner-override: backlog
+  epic-4-retrospective: optional
+
+  # ─── Epic 5: Realtime Sync & Offline Resilience ───
+  epic-5: backlog
+  5-1-firestore-offline-persistence-sync-status-indicator: backlog
+  5-2-transparent-reconnect-state-recovery: backlog
+  5-3-multi-client-sync-integration-test: backlog
+  epic-5-retrospective: optional
+
+  # ─── Epic 6: Voice Command Interaction (Post-MVP) ───
+  epic-6: backlog
+  6-1-microphone-permission-voice-mode-foundation: backlog
+  6-2-owner-device-voice-command-processing: backlog
+  6-3-voice-command-fallback-manual-parity: backlog
+  epic-6-retrospective: optional
