@@ -400,7 +400,7 @@ claude-sonnet-4-6 (GitHub Copilot)
 ### Completion Notes List
 
 - All 7 tasks completed. `flutter analyze` reports 0 issues. `flutter test` passes 1/1.
-- Dark theme seed uses `Colors.red` / `Colors.black` as a temporary workaround for Flutter 3.29 `Color` constructor issue. The intended hex value `0xFF0D0F14` should be restored when Flutter upgrades or a proper import path is established.
+- ~~Dark theme seed uses `Colors.red` / `Colors.black` as a temporary workaround for Flutter 3.29 `Color` constructor issue.~~ **[2026-03-27 — RÉSOLU]** `const Color(0xFF0D0F14)` et `const Color(0xFF161920)` appliqués correctement dans `app.dart` après correction de l'environnement. Dette technique soldée.
 - `firestore_paths.dart` is the sole file with Firestore path strings — verified via grep.
 
 ### File List

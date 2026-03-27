@@ -12,9 +12,9 @@ class App extends StatelessWidget {
         useMaterial3: true,
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blueGrey.shade900,
+          seedColor: const Color(0xFF0D0F14),
           brightness: Brightness.dark,
-        ).copyWith(surface: Colors.black),
+        ).copyWith(surface: const Color(0xFF0D0F14)),
       ),
       home: const _AppShell(),
     );
