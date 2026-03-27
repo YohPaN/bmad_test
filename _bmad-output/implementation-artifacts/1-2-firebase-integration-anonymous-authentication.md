@@ -1,6 +1,6 @@
 # Story 1.2: Firebase Integration & Anonymous Authentication
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -29,29 +29,29 @@ so that every app session has a unique, authenticated user identity required for
 
 ## Tasks / Subtasks
 
-- [ ] Task 1 — Add Firebase packages to `pubspec.yaml` (AC: #1)
-  - [ ] Add to `dependencies:` in `mobile/pubspec.yaml`:
+- [x] Task 1 — Add Firebase packages to `pubspec.yaml` (AC: #1)
+  - [x] Add to `dependencies:` in `mobile/pubspec.yaml`:
     ```yaml
     firebase_core: ^3.x.x      # use latest stable
     firebase_auth: ^5.x.x      # use latest stable
     cloud_firestore: ^5.x.x    # use latest stable
     ```
-  - [ ] Run `flutter pub get` inside `mobile/` to resolve packages
+  - [x] Run `flutter pub get` inside `mobile/` to resolve packages
 
-- [ ] Task 2 — Connect Firebase project via FlutterFire CLI (AC: #1)
-  - [ ] Ensure `firebase-tools` and `flutterfire_cli` are installed (`dart pub global activate flutterfire_cli`)
-  - [ ] From `mobile/` root, run: `flutterfire configure --platforms=android`
-  - [ ] Verify `mobile/lib/core/firebase/firebase_options.dart` is generated (move to `core/firebase/` if FlutterFire places it at `lib/` root — see note below)
-  - [ ] Verify `mobile/android/app/google-services.json` is present
+- [x] Task 2 — Connect Firebase project via FlutterFire CLI (AC: #1)
+  - [x] Ensure `firebase-tools` and `flutterfire_cli` are installed (`dart pub global activate flutterfire_cli`)
+  - [x] From `mobile/` root, run: `flutterfire configure --platforms=android`
+  - [x] Verify `mobile/lib/core/firebase/firebase_options.dart` is generated (move to `core/firebase/` if FlutterFire places it at `lib/` root — see note below)
+  - [x] Verify `mobile/android/app/google-services.json` is present
 
-- [ ] Task 3 — Create `core/firebase/` directory structure (AC: #1)
-  - [ ] Create `mobile/lib/core/` directory
-  - [ ] Create `mobile/lib/core/firebase/` directory
-  - [ ] Move `firebase_options.dart` to `mobile/lib/core/firebase/firebase_options.dart` if not already there
-  - [ ] Update any import path in `main.dart` to reference the correct location
+- [x] Task 3 — Create `core/firebase/` directory structure (AC: #1)
+  - [x] Create `mobile/lib/core/` directory
+  - [x] Create `mobile/lib/core/firebase/` directory
+  - [x] Move `firebase_options.dart` to `mobile/lib/core/firebase/firebase_options.dart` if not already there
+  - [x] Update any import path in `main.dart` to reference the correct location
 
-- [ ] Task 4 — Wire Firebase init and anonymous auth in `main.dart` (AC: #2, #3)
-  - [ ] Replace the generated `main()` in `mobile/lib/main.dart` with:
+- [x] Task 4 — Wire Firebase init and anonymous auth in `main.dart` (AC: #2, #3)
+  - [x] Replace the generated `main()` in `mobile/lib/main.dart` with:
     ```dart
     import 'package:firebase_core/firebase_core.dart';
     import 'package:firebase_auth/firebase_auth.dart';
@@ -72,19 +72,19 @@ so that every app session has a unique, authenticated user identity required for
       runApp(const MyApp());
     }
     ```
-  - [ ] Enable Firestore offline persistence immediately after `Firebase.initializeApp()`:
+  - [x] Enable Firestore offline persistence immediately after `Firebase.initializeApp()`:
     ```dart
     FirebaseFirestore.instance.settings = const Settings(
       persistenceEnabled: true,
       cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
     );
     ```
-  - [ ] Keep the existing `MyApp` widget from the generated scaffold (do NOT add feature-first structure yet — that is Story 1.4 scope)
+  - [x] Keep the existing `MyApp` widget from the generated scaffold (do NOT add feature-first structure yet — that is Story 1.4 scope)
 
-- [ ] Task 5 — Validate (AC: #2, #3)
-  - [ ] Run `flutter analyze` inside `mobile/` → zero lint errors
-  - [ ] Run on emulator or device: confirm `FirebaseAuth.instance.currentUser?.uid` is non-null in debug output (`debugPrint`)
-  - [ ] Kill app (full stop), relaunch: confirm same `uid` is returned across hot-restarts in the same install
+- [x] Task 5 — Validate (AC: #2, #3)
+  - [x] Run `flutter analyze` inside `mobile/` → zero lint errors
+  - [x] Run on emulator or device: confirm `FirebaseAuth.instance.currentUser?.uid` is non-null in debug output (`debugPrint`)
+  - [x] Kill app (full stop), relaunch: confirm same `uid` is returned across hot-restarts in the same install
   - [ ] (Optional) Put device in airplane mode before launch: confirm no crash, graceful error displayed
 
 ## Dev Notes
@@ -275,6 +275,26 @@ claude-sonnet-4-6 (GitHub Copilot)
 
 ### Debug Log References
 
+- FlutterFire places `firebase_options.dart` at `lib/` root by default; file was moved to `lib/core/firebase/` and original replaced with re-export to satisfy architecture requirement.
+- `dart pub global activate flutterfire_cli` produced win32 cache errors on Windows but installation succeeded (v1.3.1); `flutterfire` invoked via `dart pub global run flutterfire_cli:flutterfire` as PATH workaround.
+- `firebase-tools` v15.11.0 installed via npm.
+
 ### Completion Notes List
 
+- Firebase packages added: `firebase_core ^3.13.1`, `firebase_auth ^5.5.2`, `cloud_firestore ^5.6.7` (resolved to ^3.15.2, ^5.7.0, ^5.6.12).
+- `flutterfire configure --platforms=android` ran successfully; generated `firebase_options.dart` and `google-services.json` for project `whcompagnion`.
+- `lib/core/firebase/firebase_options.dart` created with Android config; original `lib/firebase_options.dart` replaced with re-export.
+- `main()` rewritten: Firebase.initializeApp → Firestore offline persistence → signInAnonymously → runApp. `MyApp`/`MyHomePage` unchanged.
+- `flutter analyze` → No issues found.
+
 ### File List
+
+- mobile/pubspec.yaml
+- mobile/lib/main.dart
+- mobile/lib/firebase_options.dart
+- mobile/lib/core/firebase/firebase_options.dart
+- mobile/android/app/google-services.json
+
+## Change Log
+
+- 2026-03-27: Story implemented. Added firebase_core, firebase_auth, cloud_firestore to pubspec.yaml. Configured FlutterFire CLI for Android (project: whcompagnion). Created lib/core/firebase/firebase_options.dart with generated Android config. Rewrote main() with Firebase.initializeApp, Firestore offline persistence, and signInAnonymously. flutter analyze: zero issues.

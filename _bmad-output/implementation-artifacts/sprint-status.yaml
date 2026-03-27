@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-03-25
-last_updated: 2026-03-25
+last_updated: 2026-03-27
 project: cursor_project
 project_key: NOKEY
 tracking_system: file-system
@@ -45,7 +45,7 @@ development_status:
   # ─── Epic 1: Project Foundation & Infrastructure Bootstrap ───
   epic-1: in-progress
   1-1-initialize-flutter-android-project: review
-  1-2-firebase-integration-anonymous-authentication: ready-for-dev
+  1-2-firebase-integration-anonymous-authentication: review
   1-3-firestore-security-rules-firebase-cli-configuration: backlog
   1-4-feature-first-project-structure-core-utilities: backlog
   1-5-internal-apk-build-distribution-setup: backlog

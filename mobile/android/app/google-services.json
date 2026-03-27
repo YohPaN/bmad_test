@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "376789122983",
+    "project_id": "whcompagnion",
+    "storage_bucket": "whcompagnion.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:376789122983:android:aa0725dc1462425ffc8082",
+        "android_client_info": {
+          "package_name": "com.vartus.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTveP0L_o_Ad3ziHowXG2Wjld6fuo-NOg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
