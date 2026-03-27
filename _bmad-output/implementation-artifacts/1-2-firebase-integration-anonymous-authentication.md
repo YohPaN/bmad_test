@@ -85,7 +85,7 @@ so that every app session has a unique, authenticated user identity required for
   - [x] Run `flutter analyze` inside `mobile/` → zero lint errors
   - [x] Run on emulator or device: confirm `FirebaseAuth.instance.currentUser?.uid` is non-null in debug output (`debugPrint`)
   - [x] Kill app (full stop), relaunch: confirm same `uid` is returned across hot-restarts in the same install
-  - [ ] (Optional) Put device in airplane mode before launch: confirm no crash, graceful error displayed
+  - [x] (Optional) Put device in airplane mode before launch: confirm no crash, graceful error displayed
 
 ## Dev Notes
 

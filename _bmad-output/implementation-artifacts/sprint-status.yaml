@@ -43,13 +43,13 @@ story_location: "_bmad-output/implementation-artifacts"
 
 development_status:
   # ─── Epic 1: Project Foundation & Infrastructure Bootstrap ───
-  epic-1: in-progress
+  epic-1: done
   1-1-initialize-flutter-android-project: done
   1-2-firebase-integration-anonymous-authentication: done
   1-3-firestore-security-rules-firebase-cli-configuration: done
   1-4-feature-first-project-structure-core-utilities: done
   1-5-internal-apk-build-distribution-setup: done
-  epic-1-retrospective: optional
+  epic-1-retrospective: done
 
   # ─── Epic 2: Match Room Lifecycle ───
   epic-2: backlog
