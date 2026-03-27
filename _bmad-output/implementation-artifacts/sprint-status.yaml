@@ -52,18 +52,18 @@ development_status:
   epic-1-retrospective: done
 
   # ─── Epic 2: Match Room Lifecycle ───
-  epic-2: in-progress
+  epic-2: done
   2-1-room-domain-models-repository: done
   2-2-create-room-lobby-screen: done
   2-3-join-room-by-code: done
   2-4-start-match-session: done
   2-5-player-presence-room-management-screen: done
   2-6-players-screen-connected-participants-view: done
-  epic-2-retrospective: optional
+  epic-2-retrospective: done
 
   # ─── Epic 3: Live Match Score & Resource Tracking ───
-  epic-3: backlog
-  3-1-game-domain-models-pure-business-rules: backlog
+  epic-3: in-progress
+  3-1-game-domain-models-pure-business-rules: ready-for-dev
   3-2-score-grid-widget-round-score-cell: backlog
   3-3-round-score-entry-bottom-sheet: backlog
   3-4-score-hero-bar-real-time-score-broadcast: backlog
