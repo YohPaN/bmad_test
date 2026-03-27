@@ -1,6 +1,6 @@
 # Story 1.3: Firestore Security Rules & Firebase CLI Configuration
 
-Status: ready-for-dev
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -32,17 +32,17 @@ so that data access is enforced server-side and matches the ownership model from
 
 ## Tasks / Subtasks
 
-- [ ] Task 1 — Create `mobile/firestore.rules` with complete security rules (AC: #1, #2, #3)
-  - [ ] Create `mobile/firestore.rules` with the following content (see Dev Notes for exact rules):
+- [x] Task 1 — Create `mobile/firestore.rules` with complete security rules (AC: #1, #2, #3)
+  - [x] Create `mobile/firestore.rules` with the following content (see Dev Notes for exact rules):
     - `isAuthenticated()` helper: `request.auth != null`
     - `isRoomOwner(roomId)` helper: fetches room doc and checks `createdBy == uid`
     - `/rooms/{roomId}`: any authenticated user can read; authenticated user can create; only owner can update `status` field
     - `/rooms/{roomId}/players/{uid}`: any authenticated user can read; only own `uid` can create; own `uid` OR room owner can update
     - `/rooms/{roomId}/events/{eventId}`: any authenticated user can read and create; update only allowed for setting `undone: true` — restricted to event `actorId` OR room owner; delete forbidden
 
-- [ ] Task 2 — Update `mobile/firebase.json` to add Firebase CLI firestore config (AC: #4)
-  - [ ] Open `mobile/firebase.json` (currently contains FlutterFire `"flutter"` section only)
-  - [ ] Add a `"firestore"` section alongside the existing `"flutter"` section:
+- [x] Task 2 — Update `mobile/firebase.json` to add Firebase CLI firestore config (AC: #4)
+  - [x] Open `mobile/firebase.json` (currently contains FlutterFire `"flutter"` section only)
+  - [x] Add a `"firestore"` section alongside the existing `"flutter"` section:
     ```json
     {
       "firestore": {
@@ -52,10 +52,10 @@ so that data access is enforced server-side and matches the ownership model from
       "flutter": { ... existing content ... }
     }
     ```
-  - [ ] Preserve all existing `"flutter"` config untouched
+  - [x] Preserve all existing `"flutter"` config untouched
 
-- [ ] Task 3 — Create `mobile/firestore.indexes.json` (AC: #4)
-  - [ ] Create `mobile/firestore.indexes.json` with empty indexes (required by Firebase CLI):
+- [x] Task 3 — Create `mobile/firestore.indexes.json` (AC: #4)
+  - [x] Create `mobile/firestore.indexes.json` with empty indexes (required by Firebase CLI):
     ```json
     {
       "indexes": [],
@@ -63,8 +63,8 @@ so that data access is enforced server-side and matches the ownership model from
     }
     ```
 
-- [ ] Task 4 — Create `mobile/.firebaserc` with project reference (AC: #4)
-  - [ ] Create `mobile/.firebaserc`:
+- [x] Task 4 — Create `mobile/.firebaserc` with project reference (AC: #4)
+  - [x] Create `mobile/.firebaserc`:
     ```json
     {
       "projects": {
@@ -73,9 +73,9 @@ so that data access is enforced server-side and matches the ownership model from
     }
     ```
 
-- [ ] Task 5 — Validate rules deployment (AC: #1, #2, #3, #4)
-  - [ ] From `mobile/`, run: `firebase deploy --only firestore:rules`
-  - [ ] Confirm command exits without error
+- [x] Task 5 — Validate rules deployment (AC: #1, #2, #3, #4)
+  - [x] From `mobile/`, run: `firebase deploy --only firestore:rules`
+  - [x] Confirm command exits without error
   - [ ] (Optional) Using Firebase Console's Rules Playground, verify each security rule scenario from the acceptance criteria
 
 ## Dev Notes
@@ -297,6 +297,32 @@ If Firebase CLI is not logged in, run `firebase login` first.
 ### Agent Model Used
 
 claude-sonnet-4-6 (GitHub Copilot)
+
+### Implementation Notes
+
+- Created `mobile/firestore.rules` with complete security rules covering rooms, players, and events subcollections. Implemented `isAuthenticated()` and `isRoomOwner()` helpers. All hard-deletes are explicitly forbidden per architecture requirements.
+- Updated `mobile/firebase.json` from minified single-line FlutterFire format to pretty-printed JSON, adding `"firestore"` section with `rules` and `indexes` references. All existing `"flutter"` content preserved verbatim.
+- Created `mobile/firestore.indexes.json` with empty indexes/fieldOverrides as required by Firebase CLI.
+- Created `mobile/.firebaserc` referencing project `whcompagnion`.
+- Ran `firebase deploy --only firestore:rules` from `mobile/`. Firebase automatically enabled `firestore.googleapis.com` API, created the default Firestore database, compiled rules successfully, and published them. Deploy exited with `+  Deploy complete!`.
+- No Dart/Flutter source files were modified — scope strictly limited to Firebase CLI config and security rules.
+
+### File List
+
+- `mobile/firestore.rules` — Created (new)
+- `mobile/firebase.json` — Modified (added `"firestore"` section; reformatted to pretty JSON)
+- `mobile/firestore.indexes.json` — Created (new)
+- `mobile/.firebaserc` — Created (new)
+
+### Change Log
+
+| Date | Change | Reason |
+|------|--------|--------|
+| 2026-03-27 | Created `firestore.rules` with complete ownership-based security rules | AC #1, #2, #3 — server-side enforcement of player and owner permissions |
+| 2026-03-27 | Updated `firebase.json` to add `"firestore"` CLI section | AC #4 — enable `firebase deploy --only firestore:rules` |
+| 2026-03-27 | Created `firestore.indexes.json` (empty) | AC #4 — required by Firebase CLI |
+| 2026-03-27 | Created `.firebaserc` pointing to `whcompagnion` | AC #4 — Firebase project reference |
+| 2026-03-27 | Ran `firebase deploy --only firestore:rules` — completed successfully | AC #4 — deployment verified |
 
 ### Debug Log References
 

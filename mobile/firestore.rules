@@ -1,0 +1,66 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helper Functions ──────────────────────────────────────────────────
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isRoomOwner(roomId) {
+      return isAuthenticated() &&
+             request.auth.uid ==
+               get(/databases/$(database)/documents/rooms/$(roomId)).data.createdBy;
+    }
+
+    // ─── Rooms ─────────────────────────────────────────────────────────────
+    match /rooms/{roomId} {
+      // Any authenticated user can read a room
+      allow read: if isAuthenticated();
+
+      // Any authenticated user can create a room
+      allow create: if isAuthenticated();
+
+      // Only the room owner may update any field
+      allow update: if isRoomOwner(roomId);
+
+      // Hard delete forbidden — rooms are never deleted at MVP
+      allow delete: if false;
+
+      // ─── Players Subcollection ──────────────────────────────────────────
+      match /players/{uid} {
+        // Any authenticated user can read player documents in the room
+        allow read: if isAuthenticated();
+
+        // A player can only create their own player document
+        allow create: if isAuthenticated() && request.auth.uid == uid;
+
+        // A player can update their own doc; room owner can override any player doc
+        allow update: if isAuthenticated() &&
+                         (request.auth.uid == uid || isRoomOwner(roomId));
+
+        allow delete: if false;
+      }
+
+      // ─── Events Subcollection ───────────────────────────────────────────
+      match /events/{eventId} {
+        // Any authenticated user can read events
+        allow read: if isAuthenticated();
+
+        // Any authenticated user can append (create) an event
+        allow create: if isAuthenticated();
+
+        // Update ONLY to set 'undone: true' — restricted to event author OR room owner
+        // Hard delete is FORBIDDEN — undo is always a soft-mark
+        allow update: if isAuthenticated() &&
+                         request.resource.data.diff(resource.data)
+                           .affectedKeys().hasOnly(['undone']) &&
+                         request.resource.data.undone == true &&
+                         (request.auth.uid == resource.data.actorId ||
+                          isRoomOwner(roomId));
+
+        allow delete: if false;
+      }
+    }
+  }
+}
