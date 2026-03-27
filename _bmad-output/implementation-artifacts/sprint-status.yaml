@@ -47,7 +47,7 @@ development_status:
   1-1-initialize-flutter-android-project: done
   1-2-firebase-integration-anonymous-authentication: done
   1-3-firestore-security-rules-firebase-cli-configuration: done
-  1-4-feature-first-project-structure-core-utilities: backlog
+  1-4-feature-first-project-structure-core-utilities: done
   1-5-internal-apk-build-distribution-setup: backlog
   epic-1-retrospective: optional
 
