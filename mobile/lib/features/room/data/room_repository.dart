@@ -134,6 +134,62 @@ class RoomRepository {
     }
   }
 
+  // ── Ownership transfer ────────────────────────────────────────────────────
+
+  /// Transfers ownership from the current user to [newOwnerUid].
+  /// Atomically updates room.createdBy, old owner's role → player,
+  /// new owner's role → owner, in a single Firestore batch.
+  /// Throws [RoomException] if the update fails.
+  Future<void> transferOwnership(String roomId, String newOwnerUid) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) throw RoomException('User not authenticated');
+    try {
+      final batch = FirebaseFirestore.instance.batch();
+      batch.update(FirestorePaths.room(roomId), {'createdBy': newOwnerUid});
+      batch.update(FirestorePaths.player(roomId, uid), {'role': 'player'});
+      batch.update(FirestorePaths.player(roomId, newOwnerUid), {
+        'role': 'owner',
+      });
+      await batch.commit();
+    } on RoomException {
+      rethrow;
+    } catch (e) {
+      throw RoomException('Failed to transfer ownership: $e');
+    }
+  }
+
+  // ── Room closure ──────────────────────────────────────────────────────────
+
+  /// Closes the room by setting its status to 'closed'.
+  /// Firestore Security Rules enforce that only the room owner can do this.
+  /// Throws [RoomException] if the update fails.
+  Future<void> closeRoom(String roomId) async {
+    try {
+      await FirestorePaths.room(roomId).update({'status': 'closed'});
+    } on RoomException {
+      rethrow;
+    } catch (e) {
+      throw RoomException('Failed to close room: $e');
+    }
+  }
+
+  // ── Room departure ────────────────────────────────────────────────────────
+
+  /// Marks the current player as disconnected without closing the room.
+  /// Safe to call by non-owners to leave a session gracefully.
+  /// Throws [RoomException] if the update fails.
+  Future<void> leaveRoom(String roomId) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+    try {
+      await FirestorePaths.player(roomId, uid).update({'connected': false});
+    } on RoomException {
+      rethrow;
+    } catch (e) {
+      throw RoomException('Failed to leave room: $e');
+    }
+  }
+
   // ── Private helpers ───────────────────────────────────────────────────────
 
   String _generateRoomCode() {

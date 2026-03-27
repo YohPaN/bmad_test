@@ -370,7 +370,9 @@ class _LobbyScreenState extends State<LobbyScreen> {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (mounted) {
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const AppShell()),
+                    MaterialPageRoute(
+                      builder: (_) => AppShell(roomId: _roomId!),
+                    ),
                   );
                 }
               });
