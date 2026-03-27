@@ -23,14 +23,14 @@ class App extends StatelessWidget {
   }
 }
 
-class _AppShell extends StatefulWidget {
-  const _AppShell();
+class AppShell extends StatefulWidget {
+  const AppShell({super.key});
 
   @override
-  State<_AppShell> createState() => _AppShellState();
+  State<AppShell> createState() => _AppShellState();
 }
 
-class _AppShellState extends State<_AppShell> {
+class _AppShellState extends State<AppShell> {
   int _currentIndex = 0;
 
   static const List<String> _tabLabels = [

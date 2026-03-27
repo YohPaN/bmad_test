@@ -113,6 +113,27 @@ class RoomRepository {
     );
   }
 
+  // ── Current user ──────────────────────────────────────────────────────────
+
+  /// Returns the current authenticated user's UID, or null if unauthenticated.
+  String? get currentUserId => _auth.currentUser?.uid;
+
+  // ── Match lifecycle ───────────────────────────────────────────────────────
+
+  /// Updates the room status to active, setting currentRound to 1.
+  /// Throws [RoomException] if the update fails.
+  Future<void> startMatch(String roomId) async {
+    try {
+      await FirestorePaths.room(
+        roomId,
+      ).update({'status': 'active', 'currentRound': 1});
+    } on RoomException {
+      rethrow;
+    } catch (e) {
+      throw RoomException('Failed to start match: $e');
+    }
+  }
+
   // ── Private helpers ───────────────────────────────────────────────────────
 
   String _generateRoomCode() {

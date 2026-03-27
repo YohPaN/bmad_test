@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../app/app.dart';
 import '../data/room_repository.dart';
 import '../domain/models.dart';
 import 'widgets/player_presence_badge.dart';
@@ -24,6 +25,9 @@ class _LobbyScreenState extends State<LobbyScreen> {
   String? _joinErrorMessage;
   final _codeController = TextEditingController();
   final _joinNameController = TextEditingController();
+
+  bool _isStartLoading = false;
+  bool _navigationTriggered = false;
 
   @override
   void dispose() {
@@ -105,6 +109,40 @@ class _LobbyScreenState extends State<LobbyScreen> {
         _joinErrorMessage = 'Une erreur inattendue est survenue.';
         _isJoinLoading = false;
       });
+    }
+  }
+
+  Future<void> _startMatch() async {
+    final roomId = _roomId;
+    if (roomId == null) return;
+    setState(() => _isStartLoading = true);
+    try {
+      await _repo.startMatch(roomId);
+      // Navigation handled by StreamBuilder reaction (Task 4).
+      // Safety timeout: reset loading state if stream never delivers active status.
+      Future.delayed(const Duration(seconds: 10), () {
+        if (mounted && _isStartLoading) {
+          setState(() => _isStartLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Le match tarde à démarrer. Réessayez.'),
+            ),
+          );
+        }
+      });
+    } on RoomException catch (e) {
+      if (!mounted) return;
+      setState(() => _isStartLoading = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message)));
+    } catch (e) {
+      debugPrint('startMatch unexpected error: $e');
+      if (!mounted) return;
+      setState(() => _isStartLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Impossible de démarrer le match.')),
+      );
     }
   }
 
@@ -325,6 +363,22 @@ class _LobbyScreenState extends State<LobbyScreen> {
             );
           }
 
+          // ── Auto-navigate when match starts ────────────────────────────
+          if (room.status == RoomStatus.active) {
+            if (!_navigationTriggered) {
+              _navigationTriggered = true;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const AppShell()),
+                  );
+                }
+              });
+            }
+            return const SizedBox.shrink();
+          }
+          // ───────────────────────────────────────────────────────────────
+
           return StreamBuilder<List<PlayerModel>>(
             stream: _repo.streamPlayers(_roomId!),
             builder: (context, playersSnapshot) {
@@ -342,6 +396,9 @@ class _LobbyScreenState extends State<LobbyScreen> {
               }
               final players = playersSnapshot.data ?? [];
               final connectedCount = players.where((p) => p.connected).length;
+              final isOwner = room.createdBy == _repo.currentUserId;
+              final canStart =
+                  isOwner && connectedCount >= 2 && !_isStartLoading;
 
               return SingleChildScrollView(
                 child: Column(
@@ -461,20 +518,34 @@ class _LobbyScreenState extends State<LobbyScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    // Launch button
-                    Opacity(
-                      opacity: connectedCount < 2 ? 0.38 : 1.0,
-                      child: FilledButton(
-                        // TODO(story-2.4): wire navigation to match screen
-                        onPressed: null,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xFF4FC3F7),
-                          foregroundColor: const Color(0xFF0D0F14),
-                          minimumSize: const Size.fromHeight(48),
+                    // Launch button — owner only
+                    if (isOwner)
+                      Opacity(
+                        opacity: canStart ? 1.0 : 0.38,
+                        child: SizedBox(
+                          height: 48,
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed: canStart ? _startMatch : null,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: const Color(0xFF4FC3F7),
+                              foregroundColor: const Color(0xFF0D0F14),
+                              minimumSize: const Size.fromHeight(48),
+                            ),
+                            child:
+                                _isStartLoading
+                                    ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Color(0xFF0D0F14),
+                                      ),
+                                    )
+                                    : const Text('Lancer le match'),
+                          ),
                         ),
-                        child: const Text('Lancer le match'),
                       ),
-                    ),
                   ],
                 ),
               );

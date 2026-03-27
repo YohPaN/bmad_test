@@ -56,7 +56,7 @@ development_status:
   2-1-room-domain-models-repository: done
   2-2-create-room-lobby-screen: done
   2-3-join-room-by-code: done
-  2-4-start-match-session: backlog
+  2-4-start-match-session: done
   2-5-player-presence-room-management-screen: backlog
   2-6-players-screen-connected-participants-view: backlog
   epic-2-retrospective: optional
