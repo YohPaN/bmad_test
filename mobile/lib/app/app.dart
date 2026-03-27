@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../features/room/data/room_repository.dart';
 import '../features/room/domain/models.dart';
 import '../features/room/presentation/lobby_screen.dart';
+import '../features/room/presentation/players_screen.dart';
 import '../features/room/presentation/room_management_screen.dart';
 
 class App extends StatelessWidget {
@@ -115,7 +116,7 @@ class _AppShellState extends State<AppShell> {
       case 1:
         return const Center(child: Text('Historique — coming soon'));
       case 2:
-        return const Center(child: Text('Joueurs — coming soon'));
+        return PlayersScreen(roomId: widget.roomId);
       case 3:
         return RoomManagementScreen(roomId: widget.roomId);
       default:
