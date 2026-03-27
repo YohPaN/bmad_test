@@ -68,7 +68,7 @@ class RoomRepository {
               .get();
 
       if (snapshot.docs.isEmpty) {
-        throw const RoomException('Room not found');
+        throw const RoomException('Room introuvable');
       }
 
       final roomDoc = snapshot.docs.first;
@@ -76,8 +76,12 @@ class RoomRepository {
         roomDoc.data()['status'] as String? ?? '',
       );
 
-      if (roomStatus != RoomStatus.waiting) {
-        throw const RoomException('Room is not open for joining');
+      if (roomStatus == RoomStatus.active) {
+        throw const RoomException('Match déjà en cours');
+      } else if (roomStatus == RoomStatus.closed) {
+        throw const RoomException('Room fermée');
+      } else if (roomStatus != RoomStatus.waiting) {
+        throw const RoomException('Room non disponible');
       }
 
       await FirestorePaths.player(roomDoc.id, uid).set({
