@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../features/room/presentation/lobby_screen.dart';
+
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -16,7 +18,7 @@ class App extends StatelessWidget {
           brightness: Brightness.dark,
         ).copyWith(surface: const Color(0xFF0D0F14)),
       ),
-      home: const _AppShell(),
+      home: const LobbyScreen(),
     );
   }
 }

@@ -54,7 +54,7 @@ development_status:
   # ─── Epic 2: Match Room Lifecycle ───
   epic-2: in-progress
   2-1-room-domain-models-repository: done
-  2-2-create-room-lobby-screen: backlog
+  2-2-create-room-lobby-screen: review
   2-3-join-room-by-code: backlog
   2-4-start-match-session: backlog
   2-5-player-presence-room-management-screen: backlog
