@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../../core/utils/color_utils.dart';
 import '../../../room/domain/models.dart';
 import 'round_score_cell.dart';
 
@@ -134,9 +135,9 @@ class ScoreGridWidget extends StatelessWidget {
         // P2 Sec
         _buildPlayerCell(round, p2, vpKey: 'sec'),
         // P1 round total
-        _totalCell(p1RoundTotal, _colorFromHex(p1.color)),
+        _totalCell(p1RoundTotal, colorFromHex(p1.color)),
         // P2 round total
-        _totalCell(p2RoundTotal, _colorFromHex(p2.color)),
+        _totalCell(p2RoundTotal, colorFromHex(p2.color)),
       ],
     );
   }
@@ -164,7 +165,7 @@ class ScoreGridWidget extends StatelessWidget {
       child: RoundScoreCell(
         state: state,
         roundNumber: round,
-        playerColor: _colorFromHex(player.color),
+        playerColor: colorFromHex(player.color),
         vpPrim: vpKey == 'prim' ? vpValue : null,
         vpSec: vpKey == 'sec' ? vpValue : null,
         onTap:
@@ -212,13 +213,5 @@ class ScoreGridWidget extends StatelessWidget {
     // round == activeRound
     if (currentUserId == playerId || isOwner) return RoundCellState.active;
     return RoundCellState.locked;
-  }
-
-  static Color _colorFromHex(String hex) {
-    final normalized = hex.startsWith('#') ? hex.substring(1) : hex;
-    final buffer = StringBuffer();
-    if (normalized.length == 6) buffer.write('ff');
-    buffer.write(normalized);
-    return Color(int.parse(buffer.toString(), radix: 16));
   }
 }

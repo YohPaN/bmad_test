@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/utils/color_utils.dart';
 import '../../room/data/room_repository.dart';
 import '../../room/domain/models.dart';
+import '../data/event_repository.dart';
+import '../domain/game_rules.dart';
+import 'widgets/ownership_lock_feedback.dart';
+import 'widgets/round_score_entry_sheet.dart';
 import 'widgets/score_grid_widget.dart';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -51,14 +56,22 @@ class MatchScreen extends StatelessWidget {
               body: SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ScoreGridWidget(
-                    players: players,
-                    activeRound: room.currentRound,
-                    currentUserId: currentUserId,
-                    isOwner: isOwner,
-                    onCellTap: (playerId, round) {
-                      debugPrint('Cell tapped: $playerId round $round');
-                    },
+                  child: Builder(
+                    builder:
+                        (innerContext) => ScoreGridWidget(
+                          players: players,
+                          activeRound: room.currentRound,
+                          currentUserId: currentUserId,
+                          isOwner: isOwner,
+                          onCellTap:
+                              (playerId, round) => _handleCellTap(
+                                innerContext,
+                                playerId,
+                                round,
+                                room,
+                                players,
+                              ),
+                        ),
                   ),
                 ),
               ),
@@ -66,6 +79,51 @@ class MatchScreen extends StatelessWidget {
           },
         );
       },
+    );
+  }
+
+  void _handleCellTap(
+    BuildContext context,
+    String playerId,
+    int round,
+    RoomModel room,
+    List<PlayerModel> players,
+  ) {
+    if (!canMutate(currentUserId, room.createdBy, playerId)) {
+      OwnershipLockFeedback.trigger(context);
+      return;
+    }
+
+    final player = players.firstWhere(
+      (p) => p.id == playerId,
+      orElse: () => throw StateError('Player $playerId not found in room'),
+    );
+    final roundKey = round.toString();
+    final roundData = player.vpByRound[roundKey];
+
+    RoundScoreEntrySheet.show(
+      context,
+      roundNumber: round,
+      playerName: player.name,
+      playerColor: colorFromHex(player.color),
+      vpPrimInitial: roundData?['prim'],
+      vpSecInitial: roundData?['sec'],
+      onConfirm:
+          (vpPrim, vpSec) => EventRepository().submitScoreUpdate(
+            roomId: room.id,
+            actorId: currentUserId,
+            targetPlayerId: playerId,
+            round: round,
+            beforeVp:
+                roundData != null
+                    ? {
+                      'prim': roundData['prim'] ?? 0,
+                      'sec': roundData['sec'] ?? 0,
+                    }
+                    : null,
+            vpPrimAfter: vpPrim,
+            vpSecAfter: vpSec,
+          ),
     );
   }
 }

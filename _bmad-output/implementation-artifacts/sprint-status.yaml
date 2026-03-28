@@ -65,7 +65,7 @@ development_status:
   epic-3: in-progress
   3-1-game-domain-models-pure-business-rules: done
   3-2-score-grid-widget-round-score-cell: done
-  3-3-round-score-entry-bottom-sheet: backlog
+  3-3-round-score-entry-bottom-sheet: done
   3-4-score-hero-bar-real-time-score-broadcast: backlog
   3-5-command-points-counter-round-advancement: backlog
   epic-3-retrospective: optional
