@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../features/game/presentation/match_screen.dart';
 
 import '../features/room/data/room_repository.dart';
 import '../features/room/domain/models.dart';
@@ -112,7 +115,8 @@ class _AppShellState extends State<AppShell> {
   Widget _buildBody() {
     switch (_currentIndex) {
       case 0:
-        return const Center(child: Text('Match — coming soon'));
+        final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+        return MatchScreen(roomId: widget.roomId, currentUserId: uid);
       case 1:
         return const Center(child: Text('Historique — coming soon'));
       case 2:
