@@ -8,6 +8,7 @@ import '../domain/game_rules.dart';
 import 'widgets/ownership_lock_feedback.dart';
 import 'widgets/round_score_entry_sheet.dart';
 import 'widgets/score_grid_widget.dart';
+import 'widgets/score_hero_bar.dart';
 
 // ────────────────────────────────────────────────────────────────────────────
 // MatchScreen
@@ -54,25 +55,34 @@ class MatchScreen extends StatelessWidget {
             return Scaffold(
               backgroundColor: _surfaceBg,
               body: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Builder(
-                    builder:
-                        (innerContext) => ScoreGridWidget(
-                          players: players,
-                          activeRound: room.currentRound,
-                          currentUserId: currentUserId,
-                          isOwner: isOwner,
-                          onCellTap:
-                              (playerId, round) => _handleCellTap(
-                                innerContext,
-                                playerId,
-                                round,
-                                room,
-                                players,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ScoreHeroBar(player1: players[0], player2: players[1]),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Builder(
+                          builder:
+                              (innerContext) => ScoreGridWidget(
+                                players: players,
+                                activeRound: room.currentRound,
+                                currentUserId: currentUserId,
+                                isOwner: isOwner,
+                                onCellTap:
+                                    (playerId, round) => _handleCellTap(
+                                      innerContext,
+                                      playerId,
+                                      round,
+                                      room,
+                                      players,
+                                    ),
                               ),
                         ),
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );

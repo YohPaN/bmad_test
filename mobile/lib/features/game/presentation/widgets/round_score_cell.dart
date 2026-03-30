@@ -19,13 +19,18 @@ enum RoundCellState { empty, active, filled, locked, future }
 /// - [RoundCellState.filled] — VP Prim + VP Sec + total in Roboto Mono.
 /// - [RoundCellState.locked] — lock icon at 12 sp / 0.3 opacity (UX-DR16).
 /// - [RoundCellState.future] — fully greyed out, non-interactive.
-class RoundScoreCell extends StatelessWidget {
+///
+/// When [flashOnUpdate] is `true` and the cell is in [RoundCellState.filled],
+/// a 200ms opacity flash in [playerColor] is triggered whenever [vpPrim] or
+/// [vpSec] changes (UX-DR13).
+class RoundScoreCell extends StatefulWidget {
   final RoundCellState state;
   final int roundNumber;
   final int? vpPrim;
   final int? vpSec;
   final Color playerColor;
   final VoidCallback? onTap;
+  final bool flashOnUpdate;
 
   static const Color _textMuted = Color(0xFF5C6478);
   static const Color _textPrimary = Color(0xFFE8EAF0);
@@ -41,49 +46,112 @@ class RoundScoreCell extends StatelessWidget {
     this.vpPrim,
     this.vpSec,
     this.onTap,
+    this.flashOnUpdate = false,
   });
 
   @override
+  State<RoundScoreCell> createState() => _RoundScoreCellState();
+}
+
+class _RoundScoreCellState extends State<RoundScoreCell>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _flashController;
+  late final Animation<double> _flashOpacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _flashController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _flashOpacity = Tween<double>(
+      begin: 0.0,
+      end: 0.4,
+    ).animate(CurvedAnimation(parent: _flashController, curve: Curves.easeOut));
+  }
+
+  @override
+  void dispose() {
+    _flashController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(RoundScoreCell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.flashOnUpdate &&
+        widget.state == RoundCellState.filled &&
+        (widget.vpPrim != oldWidget.vpPrim ||
+            widget.vpSec != oldWidget.vpSec)) {
+      _flashController.forward(from: 0.0).then((_) {
+        if (mounted) _flashController.reverse();
+      });
+    }
+  }
+
+  bool get _isInteractive =>
+      widget.state == RoundCellState.empty ||
+      widget.state == RoundCellState.active ||
+      widget.state == RoundCellState.locked;
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _isInteractive ? onTap : null,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          minWidth: _minTouchSize,
-          minHeight: _minTouchSize,
+    return AnimatedBuilder(
+      animation: _flashOpacity,
+      builder: (context, child) {
+        return Stack(
+          children: [
+            child!,
+            if (_flashController.isAnimating || _flashController.value > 0)
+              Positioned.fill(
+                child: ColoredBox(
+                  color: widget.playerColor.withValues(
+                    alpha: _flashOpacity.value,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+      child: GestureDetector(
+        onTap: _isInteractive ? widget.onTap : null,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            minWidth: RoundScoreCell._minTouchSize,
+            minHeight: RoundScoreCell._minTouchSize,
+          ),
+          child: _buildCell(),
         ),
-        child: _buildCell(),
       ),
     );
   }
 
-  bool get _isInteractive =>
-      state == RoundCellState.empty ||
-      state == RoundCellState.active ||
-      state == RoundCellState.locked;
-
   Widget _buildCell() {
-    switch (state) {
+    switch (widget.state) {
       case RoundCellState.empty:
         return _cellContainer(
           border: Border.all(color: Colors.transparent),
           child: Center(
             child: Text(
               '—',
-              style: GoogleFonts.robotoMono(fontSize: 14, color: _textMuted),
+              style: GoogleFonts.robotoMono(
+                fontSize: 14,
+                color: RoundScoreCell._textMuted,
+              ),
             ),
           ),
         );
 
       case RoundCellState.active:
         return _cellContainer(
-          border: Border.all(color: playerColor, width: 1),
+          border: Border.all(color: widget.playerColor, width: 1),
           child: const SizedBox.shrink(),
         );
 
       case RoundCellState.filled:
-        final prim = vpPrim ?? 0;
-        final sec = vpSec ?? 0;
+        final prim = widget.vpPrim ?? 0;
+        final sec = widget.vpSec ?? 0;
         final total = prim + sec;
         return _cellContainer(
           child: Padding(
@@ -98,7 +166,7 @@ class RoundScoreCell extends StatelessWidget {
                   style: GoogleFonts.robotoMono(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
-                    color: _textPrimary,
+                    color: RoundScoreCell._textPrimary,
                   ),
                 ),
                 Text(
@@ -106,14 +174,14 @@ class RoundScoreCell extends StatelessWidget {
                   style: GoogleFonts.robotoMono(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
-                    color: _textPrimary,
+                    color: RoundScoreCell._textPrimary,
                   ),
                 ),
                 Text(
                   'T:$total',
                   style: GoogleFonts.robotoMono(
                     fontSize: 14,
-                    color: _textPrimary,
+                    color: RoundScoreCell._textPrimary,
                   ),
                 ),
               ],
@@ -144,7 +212,10 @@ class RoundScoreCell extends StatelessWidget {
           child: Center(
             child: Text(
               '—',
-              style: GoogleFonts.robotoMono(fontSize: 14, color: _textMuted),
+              style: GoogleFonts.robotoMono(
+                fontSize: 14,
+                color: RoundScoreCell._textMuted,
+              ),
             ),
           ),
         );
@@ -154,9 +225,9 @@ class RoundScoreCell extends StatelessWidget {
   Widget _cellContainer({required Widget child, Border? border}) {
     return Container(
       decoration: BoxDecoration(
-        color: _surfaceCard,
+        color: RoundScoreCell._surfaceCard,
         border: border,
-        borderRadius: BorderRadius.circular(_borderRadius),
+        borderRadius: BorderRadius.circular(RoundScoreCell._borderRadius),
       ),
       child: child,
     );

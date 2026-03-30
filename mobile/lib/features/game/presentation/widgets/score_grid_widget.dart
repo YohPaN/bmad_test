@@ -168,6 +168,7 @@ class ScoreGridWidget extends StatelessWidget {
         playerColor: colorFromHex(player.color),
         vpPrim: vpKey == 'prim' ? vpValue : null,
         vpSec: vpKey == 'sec' ? vpValue : null,
+        flashOnUpdate: state == RoundCellState.filled,
         onTap:
             _isInteractiveState(state)
                 ? () => onCellTap?.call(player.id, round)

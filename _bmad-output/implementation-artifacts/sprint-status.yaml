@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-03-25
-last_updated: 2026-03-28
+last_updated: 2026-03-30
 project: cursor_project
 project_key: NOKEY
 tracking_system: file-system
@@ -66,7 +66,7 @@ development_status:
   3-1-game-domain-models-pure-business-rules: done
   3-2-score-grid-widget-round-score-cell: done
   3-3-round-score-entry-bottom-sheet: done
-  3-4-score-hero-bar-real-time-score-broadcast: backlog
+  3-4-score-hero-bar-real-time-score-broadcast: done
   3-5-command-points-counter-round-advancement: backlog
   epic-3-retrospective: optional
 

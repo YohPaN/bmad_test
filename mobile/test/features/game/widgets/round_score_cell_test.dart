@@ -224,4 +224,115 @@ void main() {
       await tester.tap(find.byType(RoundScoreCell), warnIfMissed: false);
     });
   });
+
+  group('RoundScoreCell — flash animation', () {
+    testWidgets('flashOnUpdate false — VP change does NOT trigger animation', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildCell(
+          const RoundScoreCell(
+            state: RoundCellState.filled,
+            roundNumber: 1,
+            playerColor: playerColor,
+            vpPrim: 3,
+            vpSec: 4,
+            flashOnUpdate: false,
+          ),
+        ),
+      );
+
+      // Rebuild with a different VP — no flash should occur
+      await tester.pumpWidget(
+        buildCell(
+          const RoundScoreCell(
+            state: RoundCellState.filled,
+            roundNumber: 1,
+            playerColor: playerColor,
+            vpPrim: 5,
+            vpSec: 6,
+            flashOnUpdate: false,
+          ),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 1));
+
+      // ColoredBox overlay should not be in the tree
+      expect(find.byType(ColoredBox), findsNothing);
+    });
+
+    testWidgets(
+      'flashOnUpdate true + filled + VP change → animation triggers',
+      (tester) async {
+        await tester.pumpWidget(
+          buildCell(
+            const RoundScoreCell(
+              state: RoundCellState.filled,
+              roundNumber: 1,
+              playerColor: playerColor,
+              vpPrim: 3,
+              vpSec: 4,
+              flashOnUpdate: true,
+            ),
+          ),
+        );
+
+        // Rebuild with updated VP to trigger didUpdateWidget
+        await tester.pumpWidget(
+          buildCell(
+            const RoundScoreCell(
+              state: RoundCellState.filled,
+              roundNumber: 1,
+              playerColor: playerColor,
+              vpPrim: 5,
+              vpSec: 6,
+              flashOnUpdate: true,
+            ),
+          ),
+        );
+
+        // Advance animation one frame — overlay should be visible
+        await tester.pump(const Duration(milliseconds: 50));
+        expect(find.byType(ColoredBox), findsOneWidget);
+
+        // Let animation complete
+        await tester.pumpAndSettle();
+      },
+    );
+
+    testWidgets(
+      'flashOnUpdate true + state NOT filled → animation does NOT trigger',
+      (tester) async {
+        await tester.pumpWidget(
+          buildCell(
+            const RoundScoreCell(
+              state: RoundCellState.active,
+              roundNumber: 1,
+              playerColor: playerColor,
+              vpPrim: 3,
+              vpSec: 4,
+              flashOnUpdate: true,
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          buildCell(
+            const RoundScoreCell(
+              state: RoundCellState.active,
+              roundNumber: 1,
+              playerColor: playerColor,
+              vpPrim: 5,
+              vpSec: 6,
+              flashOnUpdate: true,
+            ),
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 50));
+
+        // No ColoredBox overlay — wrong state
+        expect(find.byType(ColoredBox), findsNothing);
+      },
+    );
+  });
 }
