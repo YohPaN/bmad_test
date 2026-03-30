@@ -36,6 +36,9 @@ int vpTotal(Map<String, Map<String, int>> vpByRound) {
 // CP increment
 // ────────────────────────────────────────────────────────────────────────────
 
+/// Maximum number of rounds in a match.
+const int kMatchRounds = 5;
+
 /// Returns a new [PlayerModel] with `cp` incremented by 1.
 ///
 /// Pure function — no side effects, no Firestore interaction.

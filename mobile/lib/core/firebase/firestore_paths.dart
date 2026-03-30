@@ -26,4 +26,22 @@ class FirestorePaths {
     String roomId,
     String eventId,
   ) => events(roomId).doc(eventId);
+
+  // ── Injectable overloads (for testing with FakeFirebaseFirestore) ────────
+
+  static DocumentReference<Map<String, dynamic>> roomWith(
+    FirebaseFirestore fs,
+    String roomId,
+  ) => fs.collection('rooms').doc(roomId);
+
+  static DocumentReference<Map<String, dynamic>> playerWith(
+    FirebaseFirestore fs,
+    String roomId,
+    String uid,
+  ) => fs.collection('rooms').doc(roomId).collection('players').doc(uid);
+
+  static CollectionReference<Map<String, dynamic>> eventsWith(
+    FirebaseFirestore fs,
+    String roomId,
+  ) => fs.collection('rooms').doc(roomId).collection('events');
 }
